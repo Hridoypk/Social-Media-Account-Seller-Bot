@@ -139,6 +139,9 @@ Every deposit is **manually reviewed** by you before credits are added. No auto-
 | **Credit Preservation** | User balances automatically backed up and restored during updates. |
 | **Sheet Protection** | Credentials cleared from Google Sheet after sale + row deleted entirely. |
 | **Atomic Transactions** | Database locks ensure credits are never lost during concurrent purchases. |
+| **Admin Audit Log** | Every admin action (approve, reject, balance change, role change) is logged with timestamps. |
+| **ID Validation** | Invalid product IDs are rejected before hitting the database. |
+| **Role-Aware `/help`** | Guests, members, and admins see different command sets. |
 
 ---
 
@@ -160,8 +163,10 @@ Everything you need to manage your business from Telegram:
 /pending         → Approve/reject deposits (one-tap buttons)
 /stats           → Real-time metrics
 /addbalance      → Manually adjust user credits
+/setrole         → Change user roles (guest/member/vip/admin)
 /gencode member  → Generate invite codes
 /broadcast       → Send announcement to all users
+/auditlog        → View admin action history (last 20 actions)
 /export_payments → Download payment data as CSV
 ```
 
