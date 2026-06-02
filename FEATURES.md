@@ -21,11 +21,15 @@ Sell accounts from **four major social media platforms** through a single, unifi
 
 ### Browsing Experience
 
+- **Inline keyboard navigation** — Tap buttons instead of typing commands (Browse, Search, Deposit, Profile, Help)
+- **🔥 Hot Deals on welcome** — 3 cheapest accounts shown right on the `/start` screen
 - **Platform-specific emojis** — Each platform gets its own visual identity (🎵 📘 📸 📧)
 - **Category filtering** — Browse by niche: Fitness, Fashion, Gaming, Business, Travel, Food, etc.
 - **Paginated listings** — 5 items per page with inline navigation buttons
 - **Rich product cards** — Each listing shows ID, price, region, followers, account age, and category
 - **Verified badges** — ✅ shown next to verified accounts
+- **Cache age indicator** — "Updated 2m ago" shown at the bottom of browse results
+- **Product ID validation** — Invalid IDs like `/buy hello!` show clear error messages before hitting the database
 
 ---
 
@@ -123,7 +127,16 @@ Step 8: Credentials delivered to buyer (auto-delete after 60 seconds)
 Step 9: Cache refreshed → product disappears from listings
     ↓
 Step 10: Admin notified of sale
+    ↓
+Step 11: "What Next?" buttons shown (Browse More, Re-Download, Orders, Menu)
 ```
+
+### Smart Balance Shortfall
+
+When a user can't afford a product, the bot shows:
+- Exact amount needed: "You need $5.00 more"
+- Inline "💰 Buy Credits" button for instant deposit
+- Alternative "Browse Other" button
 
 ### Anti-Double-Sell Protection (3 Layers)
 
@@ -153,7 +166,7 @@ Credentials are stored permanently in the database, so even after the Google She
 | **Read-Only** | Reads inventory via public CSV URL | Always (no setup needed) |
 | **Read + Write** | Also marks sold, clears credentials, deletes rows | With `credentials.json` |
 
-### 15-Column Structure
+### 17-Column Structure
 
 **Public Fields (visible before purchase):**
 
@@ -228,6 +241,17 @@ python demo_data.py --json         # View as JSON
 - Maximum pending deposit limits per user
 - Admin-verified payments (no automatic crediting)
 
+### Role-Aware `/help` Command
+
+- **Guests** see only 5 basic commands (start, redeem, browse, categories, help)
+- **Members** see full shopping commands (13 commands including search, buy, deposit)
+- **Admins** see all commands including admin panel (24+ commands)
+
+### Universal `/cancel` Command
+
+- Clean exit from any multi-step flow (search, deposit, purchase)
+- Shows "Main Menu" inline button for instant navigation back
+
 ---
 
 ## 👤 Admin Dashboard
@@ -265,6 +289,22 @@ python demo_data.py --json         # View as JSON
 | `/syncsheet` | Sync sold items to Google Sheet |
 | `/refresh` | Force-reload inventory data |
 | `/backup` | View database and backup status |
+| `/auditlog` | View last 20 admin actions with timestamps |
+
+### Admin Audit Log
+
+All admin actions are automatically logged to a database table:
+
+| Action | Logged Details |
+|--------|---------------|
+| `approve_deposit` | Payment ID, credits added, target user |
+| `reject_deposit` | Payment ID, target user |
+| `addbalance` | Amount, new balance, target user |
+| `setrole` | Old role → new role, target user |
+| `gencode` | Code, role |
+| `broadcast` | Sent/failed count, message preview |
+
+View via `/auditlog` — shows emoji-coded entries with timestamps.
 
 ---
 
