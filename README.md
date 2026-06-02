@@ -39,14 +39,14 @@ A **complete, ready-to-deploy Telegram bot** that automates the selling and deli
 Customer Journey:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  /start → /categories → /getdata ACC001 → /buy ACC001
-     ↓          ↓              ↓                ↓
-  Welcome    Browse by      Enhanced         Confirm →
-  + Menu     Platform       Preview          Deduct Credits →
-             (TikTok,     (hidden fields     Deliver Credentials →
-             Facebook,     as 🔒 ********)   Auto-Delete (60s) →
-             Instagram,                      Mark SOLD in Sheet →
-             Email)                          Delete Row from Sheet
+  /start → Tap [📂 Browse] → /getdata ACC001 → Tap [Buy]
+     ↓          ↓                   ↓                ↓
+  Welcome    Browse by           Enhanced         Confirm →
+  + Balance  Platform            Preview          Deduct Credits →
+  + 🔥 Hot   (Inline Buttons)  (hidden fields     Deliver Credentials →
+    Deals    (TikTok, FB,       as 🔒 ********)   Auto-Delete (60s) →
+             IG, Email)                           Delete Row from Sheet →
+                                                  "What Next?" Buttons
 ```
 
 ---
@@ -77,13 +77,13 @@ Customer Journey:
 
 | Category | Feature |
 |----------|---------|
-| 🏪 **Marketplace** | 4 platforms · category browsing · paginated listings · platform-specific emojis |
-| 🔍 **Search** | 9-filter builder · natural language `/quick` search · search history |
-| 💰 **Payments** | 6 credit packages ($5–$199) · 4 crypto methods (USDT, BTC, ETH, SOL) |
-| 🛒 **Purchase** | Auto-delivery · credential auto-delete · re-download anytime · double-sell prevention |
-| 📊 **Google Sheets** | Live inventory · auto-mark SOLD · clear credentials · delete rows · demo data tool |
-| 🔐 **Security** | 4-tier roles · invite codes · atomic locks · masked previews · auto-backup credits |
-| 👤 **Admin** | Dashboard · deposit approve/reject · user management · broadcast · CSV exports |
+| 🏪 **Marketplace** | 4 platforms · inline keyboard navigation · paginated listings · 🔥 Hot Deals on welcome |
+| 🔍 **Search** | 9-filter builder · natural language `/quick` search · search history · ID validation |
+| 💰 **Payments** | 6 credit packages ($5–$199) · 4 crypto methods · smart balance shortfall ("You need $X more") |
+| 🛒 **Purchase** | Auto-delivery · credential auto-delete · re-download (inline button) · double-sell prevention |
+| 📊 **Google Sheets** | Live inventory · auto-mark SOLD · clear credentials · delete rows · cache age indicator |
+| 🔐 **Security** | 4-tier roles · invite codes · atomic locks · masked previews · auto-backup credits · admin audit log |
+| 👤 **Admin** | Dashboard · deposit approve/reject · user management · broadcast · CSV exports · `/auditlog` |
 | 🛡 **Reliability** | Credit preservation · auto-restore from backup · session conflict resolution · local CSV fallback |
 
 > 📖 **Full feature breakdown →** [FEATURES.md](FEATURES.md)
@@ -95,11 +95,11 @@ Customer Journey:
 ### For Buyers
 
 ```
-1. /start              → Welcome screen with balance
-2. /categories         → Browse TikTok, Facebook, Instagram, Email
+1. /start              → Welcome with balance + 🔥 Hot Deals + inline buttons
+2. Tap [📂 Browse]     → Platform selection (inline keyboard)
 3. /getdata ACC001     → Rich preview with hidden fields (🔒 ********)
-4. /buy ACC001         → Confirm purchase → Credentials delivered
-5. /download ACC001    → Re-download credentials anytime
+4. /buy ACC001         → Confirm → Credentials delivered → "What Next?" buttons
+5. Tap [📥 Re-Download] → Re-download credentials anytime
 ```
 
 ### For You (Admin)
@@ -107,9 +107,9 @@ Customer Journey:
 ```
 1. Add accounts to Google Sheet (or use demo_data.py --upload)
 2. Start the bot (python bot.py)
-3. Approve deposits from /admin panel
+3. Approve deposits from /admin panel (all actions logged to audit trail)
 4. Purchased rows auto-delete from sheet + credentials auto-delivered
-5. Check /stats for revenue, sales, and user metrics
+5. Check /stats for revenue, /auditlog for action history
 ```
 
 ---
@@ -120,18 +120,21 @@ Customer Journey:
 
 | Command | Description |
 |---------|-------------|
-| `/start` | Launch the bot and view main menu |
+| `/start` | Launch the bot — inline keyboard menu + 🔥 Hot Deals |
+| `/help` | Role-aware command reference (guest/member/admin) |
 | `/redeem CODE` | Activate account with invite code |
-| `/browse` | View all available accounts |
-| `/categories` | Browse by platform |
+| `/browse` | View all available accounts (with cache age indicator) |
+| `/categories` | Browse by platform (inline keyboard) |
 | `/newsearch` | Interactive 9-filter search builder |
 | `/quick QUERY` | Natural language search |
-| `/getdata ID` | Enhanced account preview (sensitive fields masked) |
-| `/buy ID` | Purchase an account |
+| `/getdata ID` | Enhanced account preview (with ID validation) |
+| `/buy ID` | Purchase — smart balance shortfall + confirm |
 | `/download ID` | Re-download purchased credentials |
 | `/deposit` | Buy credits with cryptocurrency |
 | `/profile` | View balance and account info |
 | `/orders` | View purchase history |
+| `/cancel` | Exit any multi-step flow |
+| `/history` | View search history |
 
 ### Admin Commands
 
@@ -142,16 +145,19 @@ Customer Journey:
 | `/pending` | Review pending deposits |
 | `/gencode Role` | Generate invite codes |
 | `/addbalance UID AMT` | Adjust user balance |
+| `/setrole UID Role` | Change user role |
 | `/broadcast MSG` | Send announcement to all users |
 | `/refresh` | Force-reload inventory from Google Sheet |
 | `/syncsheet` | Sync sold items to Google Sheet |
 | `/export_payments` | Download payment log as CSV |
+| `/auditlog` | View admin action history (last 20 actions) |
+| `/backup` | Database status and backup info |
 
 ---
 
 ## 📊 Google Sheet Structure
 
-Your inventory is a Google Sheet with 16 columns:
+Your inventory is a Google Sheet with 17 columns:
 
 | Column | Visibility | Description |
 |--------|-----------|-------------|
